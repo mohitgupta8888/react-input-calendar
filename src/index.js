@@ -12,12 +12,11 @@ import Util from './util'
 class Calendar extends React.Component {
   constructor(props, context) {
     super(props, context)
-    const date = props.date ? moment(Util.toDate(props.date)) : null
+    const date = props.date ? moment(props.date, props.format) : null
     const minDate = props.minDate ? moment(Util.toDate(props.minDate)) : null
     const maxDate = props.maxDate ? moment(Util.toDate(props.maxDate)) : null
     const format = props.format || 'MM-DD-YYYY'
     const minView = parseInt(props.minView, 10) || 0
-    const computableFormat = props.computableFormat || 'MM-DD-YYYY'
     const strictDateParsing = props.strictDateParsing || false
     const parsingFormat = props.parsingFormat || format
 
@@ -26,8 +25,6 @@ class Calendar extends React.Component {
       minDate,
       maxDate,
       format,
-      computableFormat,
-      inputValue: date ? date.format(format) : undefined,
       views: ['days', 'months', 'years'],
       minView,
       currentView: minView || 0,
@@ -44,9 +41,7 @@ class Calendar extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     let newState = {
-      date: nextProps.date ? moment(Util.toDate(nextProps.date)) : this.state.date,
-      inputValue:
-        nextProps.date ? moment(Util.toDate(nextProps.date)).format(this.state.format) : null,
+      date: nextProps.date ? moment(nextProps.date, nextProps.format) : this.state.date
     }
 
     if (nextProps.disabled === true) {
@@ -60,10 +55,6 @@ class Calendar extends React.Component {
     document.removeEventListener('click', this.documentClick)
   }
 
-  changeDate = e => { //eslint-disable-line
-    this.setState({ inputValue: e.target.value })
-  }
-
   checkIfDateDisabled(date) {
     return date && this.state.minDate && date.isBefore(this.state.minDate, 'day')
       || date && this.state.maxDate && date.isAfter(this.state.maxDate, 'day')
@@ -74,54 +65,6 @@ class Calendar extends React.Component {
       this.setVisibility(false)
     }
     this.setState({ isCalendar: false })
-  }
-
-  inputBlur = e => {
-    let newDate = null
-    let computableDate = null
-    const date = this.state.inputValue
-    const format = this.state.format
-    const parsingFormat = this.state.parsingFormat
-
-    if (date) {
-      // format, with strict parsing true, so we catch bad dates
-      newDate = moment(date, parsingFormat, true)
-      // if the new date didn't match our format, see if the native
-      // js date can parse it
-      if (!newDate.isValid() && !this.props.strictDateParsing) {
-        let d = new Date(date)
-        // if native js cannot parse, just make a new date
-        if (isNaN(d.getTime())) {
-          d = new Date()
-        }
-        newDate = moment(d)
-      }
-
-      computableDate = newDate.format(this.state.computableFormat)
-    }
-
-    this.setState({
-      date: newDate,
-      inputValue: newDate ? newDate.format(format) : null
-    })
-
-    if (this.props.onChange) {
-      this.props.onChange(computableDate)
-    }
-
-    if (this.props.onBlur) {
-      this.props.onBlur(e, computableDate)
-    }
-  }
-
-  inputFocus = e => {
-    if (this.props.openOnInputFocus) {
-      this.toggleClick()
-    }
-
-    if (this.props.onFocus) {
-      this.props.onFocus(e)
-    }
   }
 
   keyDown = e => {
@@ -146,11 +89,10 @@ class Calendar extends React.Component {
     if (this.state.currentView === this.state.minView) {
       this.setState({
         date: newDate,
-        inputValue: date.format(this.state.format),
         isVisible: false
       })
       if (this.props.onChange) {
-        this.props.onChange(date.format(this.state.computableFormat))
+        this.props.onChange(date.format(this.state.format))
       }
     } else {
       this.setState({
@@ -165,14 +107,18 @@ class Calendar extends React.Component {
 
     this.setState({
       date,
-      inputValue: date.format(this.state.format),
       isVisible: this.props.closeOnSelect
         && isDayView ? !this.state.isVisible : this.state.isVisible
     })
 
     if (this.props.onChange) {
-      this.props.onChange(date.format(this.state.computableFormat))
+      this.props.onChange(date.format(this.state.format))
     }
+    
+    if(isDayView && this.props.onClose) {
+      this.props.onClose();
+    }
+
   }
 
   setVisibility(val) {
@@ -197,18 +143,16 @@ class Calendar extends React.Component {
 
     this.setState({
       date: today,
-      inputValue: today.format(this.state.format),
       currentView: this.state.minView
     })
 
     if (this.props.onChange) {
-      this.props.onChange(today.format(this.state.computableFormat))
+      this.props.onChange(today.format(this.state.format))      
     }
-  }
+    if (this.props.onClose) {
+      this.props.onClose()      
+    }
 
-  toggleClick = () => {
-    this.setState({ isCalendar: true })
-    this.setVisibility()
   }
 
   render() {
@@ -263,7 +207,7 @@ class Calendar extends React.Component {
       'icon-hidden': this.props.hideIcon
     })
 
-    let calendar = !this.state.isVisible || this.props.disabled ? '' :
+    let calendar = !this.props.open ? '' :
       <div className={calendarClass} onClick={this.calendarClick}>
         {view}
         <span
@@ -289,46 +233,8 @@ class Calendar extends React.Component {
       }
     }
 
-    let calendarIcon
-    if (this.props.customIcon == null) {
-      // Do not show calendar icon if hideIcon is true
-      calendarIcon = this.props.hideIcon || this.props.disabled ? '' :
-        <span className="icon-wrapper calendar-icon" onClick={this.toggleClick} >
-          <svg width="16" height="16" viewBox="0 0 16 16">
-            <path d="M5 6h2v2h-2zM8 6h2v2h-2zM11 6h2v2h-2zM2 12h2v2h-2zM5
-              12h2v2h-2zM8 12h2v2h-2zM5 9h2v2h-2zM8 9h2v2h-2zM11 9h2v2h-2zM2
-              9h2v2h-2zM13 0v1h-2v-1h-7v1h-2v-1h-2v16h15v-16h-2zM14
-              15h-13v-11h13v11z"
-            />
-          </svg>
-        </span>
-    } else {
-      calendarIcon = (
-        <span
-          className={cs('icon-wrapper', 'calendar-icon', this.props.customIcon)}
-          onClick={this.toggleClick}
-        />
-      )
-    }
-
-    const inputClass = this.props.inputFieldClass || 'input-calendar-field'
-
     return (
       <div className="input-calendar">
-        <input
-          name={this.props.inputName}
-          className={inputClass}
-          id={this.props.inputFieldId}
-          onBlur={this.inputBlur}
-          onChange={this.changeDate}
-          onFocus={this.inputFocus}
-          placeholder={this.props.placeholder}
-          readOnly={readOnly}
-          disabled={this.props.disabled}
-          type="text"
-          value={this.state.inputValue||''}
-        />
-        {calendarIcon}
         {calendar}
       </div>
     )
@@ -347,9 +253,6 @@ Calendar.propTypes = {
   minDate: React.PropTypes.any,
   maxDate: React.PropTypes.any,
   format: React.PropTypes.string,
-  inputName: React.PropTypes.string,
-  inputFieldId: React.PropTypes.string,
-  inputFieldClass: React.PropTypes.string,
   minView: React.PropTypes.number,
   onBlur: React.PropTypes.func,
   onChange: React.PropTypes.func,
