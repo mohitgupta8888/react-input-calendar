@@ -1,5 +1,5 @@
 import React from 'react'
-import Calendar from './index'
+import Calendar from './Calendar'
 
 class CalendarInput extends React.Component {
     constructor(props, context) {
@@ -34,7 +34,8 @@ class CalendarInput extends React.Component {
             date={this.state.date}
             open={true}
             onChange={this.onSelect.bind(this)}
-            onClose={this.onClose.bind(this)} />
+            onClose={this.onClose.bind(this)}
+            inputRef={this.inputRef} />
 
         return (
             <div>
@@ -43,6 +44,7 @@ class CalendarInput extends React.Component {
                     onFocus={this.onFocus.bind(this) }
                     value={this.state.date}
                     onChange={this.changeDate.bind(this)}
+                    ref={(iRef) => {this.inputRef = iRef}}
                     />
                 <span className="icon-wrapper calendar-icon" onClick={this.setToday.bind(this)} >
                     <svg width="16" height="16" viewBox="0 0 16 16">

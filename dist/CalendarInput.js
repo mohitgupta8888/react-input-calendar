@@ -28,9 +28,9 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _index = require('./index');
+var _Calendar = require('./Calendar');
 
-var _index2 = _interopRequireDefault(_index);
+var _Calendar2 = _interopRequireDefault(_Calendar);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -75,13 +75,16 @@ var CalendarInput = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var calendar = !this.state.openCalendar ? null : _react2.default.createElement(_index2.default, {
+            var _this2 = this;
+
+            var calendar = !this.state.openCalendar ? null : _react2.default.createElement(_Calendar2.default, {
                 format: 'DD/MM/YYYY',
                 computableFormat: 'DD/MM/YYYY',
                 date: this.state.date,
                 open: true,
                 onChange: this.onSelect.bind(this),
-                onClose: this.onClose.bind(this) });
+                onClose: this.onClose.bind(this),
+                inputRef: this.inputRef });
 
             return _react2.default.createElement(
                 'div',
@@ -90,7 +93,10 @@ var CalendarInput = function (_React$Component) {
                     type: 'text',
                     onFocus: this.onFocus.bind(this),
                     value: this.state.date,
-                    onChange: this.changeDate.bind(this)
+                    onChange: this.changeDate.bind(this),
+                    ref: function ref(iRef) {
+                        _this2.inputRef = iRef;
+                    }
                 }),
                 _react2.default.createElement(
                     'span',

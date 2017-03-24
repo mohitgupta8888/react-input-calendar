@@ -57,11 +57,11 @@ exports.default = {
           this.prevView(this.state.date);
         }
         if (_viewHelper.exit) {
-          this.setState({ isVisible: false });
+          this.close();
         }
         break;
       case KEYS.esc:
-        this.setState({ isVisible: false });
+        this.close();
         break;
       default:
         break;
