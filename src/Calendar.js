@@ -91,9 +91,9 @@ class Calendar extends React.Component {
       if (this.props.onChange) {
         this.props.onChange(date.format(this.state.format))
       }
-      if (this.props.onClose) {
-        this.props.onClose()
-      }
+      // if (this.props.onClose) {
+      //   this.props.onClose()
+      // }
     } else {
       this.setState({
         date,
@@ -105,15 +105,15 @@ class Calendar extends React.Component {
   setDate = (date, isDayView = false) => {
     if (this.checkIfDateDisabled(date)) return
 
-    this.setState({date})
+    this.setState({ date })
 
-    if (this.props.onChange) {
+    if (isDayView && this.props.onChange) {
       this.props.onChange(date.format(this.state.format))
     }
 
-    if (this.props.closeOnSelect && isDayView && this.props.onClose) {
-      this.props.onClose();
-    }
+    // if (this.props.closeOnSelect !== false && isDayView && this.props.onClose) {
+    //   this.props.onClose();
+    // }
 
   }
 
@@ -134,24 +134,27 @@ class Calendar extends React.Component {
     if (this.props.onChange) {
       this.props.onChange(today.format(this.state.format))
     }
-    if (this.props.onClose) {
-      this.props.onClose()
-    }
+    // if (this.props.onClose) {
+    //   this.props.onClose()
+    // }
 
   }
 
   handleClickOutside(evt) {
     // ..handling code goes here...
-    if (this.props.inputRef && evt.target.isSameNode(this.props.inputRef))
-      return;
+    // if (this.props.inputRef && evt.target.isSameNode(this.props.inputRef))
+    //   return;
 
-    this.close();
+    if (this.props.onOutsideClick)
+      this.props.onOutsideClick(evt.target)
+
+    // this.close();
   }
 
-  close = () => {
-    if (this.props.onClose)
-      this.props.onClose();
-  }
+  // close = () => {
+  //   if (this.props.onClose)
+  //     this.props.onClose();
+  // }
 
   render() {
     // its ok for this.state.date to be null, but we should never
@@ -168,7 +171,7 @@ class Calendar extends React.Component {
           maxDate={this.state.maxDate}
           minDate={this.state.minDate}
           setDate={this.setDate}
-          />)
+        />)
         break
       case 1:
         view = (<MonthsView
@@ -178,7 +181,7 @@ class Calendar extends React.Component {
           minDate={this.state.minDate}
           prevView={this.prevView}
           setDate={this.setDate}
-          />)
+        />)
         break
       case 2:
         view = (<YearsView
@@ -187,7 +190,7 @@ class Calendar extends React.Component {
           minDate={this.state.minDate}
           prevView={this.prevView}
           setDate={this.setDate}
-          />)
+        />)
         break
       default:
         view = (<DaysView
@@ -196,7 +199,7 @@ class Calendar extends React.Component {
           maxDate={this.state.maxDate}
           minDate={this.state.minDate}
           setDate={this.setDate}
-          />)
+        />)
     }
 
     var todayButton;

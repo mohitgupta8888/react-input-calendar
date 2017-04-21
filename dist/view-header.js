@@ -20,20 +20,12 @@ function ViewHeader(_ref) {
   return _react2.default.createElement(
     "div",
     { className: "navigation-wrapper" },
-    _react2.default.createElement(
-      "span",
-      { className: "icon", onClick: prev },
-      "<"
-    ),
+    _react2.default.createElement("i", { className: "icon icon-arrow-right3", onClick: prev }),
     _react2.default.createElement(
       "span",
       { className: "navigation-title", onClick: titleAction },
       data
     ),
-    _react2.default.createElement(
-      "span",
-      { className: "icon", onClick: next },
-      ">"
-    )
+    _react2.default.createElement("i", { className: "icon icon-arrow-left3", onClick: next })
   );
 }

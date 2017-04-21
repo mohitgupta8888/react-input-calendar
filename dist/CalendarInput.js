@@ -54,7 +54,7 @@ var CalendarInput = function (_React$Component) {
     }, {
         key: 'onSelect',
         value: function onSelect(selectedDate) {
-            this.setState({ date: selectedDate });
+            this.setState({ openCalendar: false, date: selectedDate });
         }
     }, {
         key: 'onFocus',
@@ -68,8 +68,10 @@ var CalendarInput = function (_React$Component) {
             this.setState({ inputValue: e.target.value });
         }
     }, {
-        key: 'onClose',
-        value: function onClose() {
+        key: 'onOutsideClick',
+        value: function onOutsideClick(evtTarget) {
+            if (this.inputRef && evt.target.isSameNode(this.inputRef)) return;
+
             this.setState({ openCalendar: false });
         }
     }, {
@@ -83,8 +85,8 @@ var CalendarInput = function (_React$Component) {
                 date: this.state.date,
                 open: true,
                 onChange: this.onSelect.bind(this),
-                onClose: this.onClose.bind(this),
-                inputRef: this.inputRef });
+                onOutsideClick: this.onOutsideClick.bind(this)
+            });
 
             return _react2.default.createElement(
                 'div',

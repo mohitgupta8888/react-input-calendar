@@ -7,12 +7,12 @@ class CalendarInput extends React.Component {
         this.state = { date: '01/01/2016', openCalendar: false }
     }
 
-    setToday(){
+    setToday() {
         this.setState({ date: "17/03/2017" })
     }
 
     onSelect(selectedDate) {
-        this.setState({ date: selectedDate })
+        this.setState({ openCalendar: false, date: selectedDate })
     }
 
     onFocus() {
@@ -23,29 +23,33 @@ class CalendarInput extends React.Component {
         this.setState({ inputValue: e.target.value })
     }
 
-    onClose(){
+    onOutsideClick(evtTarget) {
+        if (this.inputRef && evt.target.isSameNode(this.inputRef))
+            return;
+
         this.setState({ openCalendar: false })
     }
+
 
     render() {
         var calendar = !this.state.openCalendar ? null : <Calendar
             format="DD/MM/YYYY"
-            computableFormat = "DD/MM/YYYY"
+            computableFormat="DD/MM/YYYY"
             date={this.state.date}
             open={true}
             onChange={this.onSelect.bind(this)}
-            onClose={this.onClose.bind(this)}
-            inputRef={this.inputRef} />
+            onOutsideClick={this.onOutsideClick.bind(this)}
+        />
 
         return (
             <div>
                 <input
                     type="text"
-                    onFocus={this.onFocus.bind(this) }
+                    onFocus={this.onFocus.bind(this)}
                     value={this.state.date}
                     onChange={this.changeDate.bind(this)}
-                    ref={(iRef) => {this.inputRef = iRef}}
-                    />
+                    ref={(iRef) => { this.inputRef = iRef }}
+                />
                 <span className="icon-wrapper calendar-icon" onClick={this.setToday.bind(this)} >
                     <svg width="16" height="16" viewBox="0 0 16 16">
                         <path d="M5 6h2v2h-2zM8 6h2v2h-2zM11 6h2v2h-2zM2 12h2v2h-2zM5

@@ -130,10 +130,19 @@ var Calendar = function (_React$Component) {
     key: 'handleClickOutside',
     value: function handleClickOutside(evt) {
       // ..handling code goes here...
-      if (this.props.inputRef && evt.target.isSameNode(this.props.inputRef)) return;
+      // if (this.props.inputRef && evt.target.isSameNode(this.props.inputRef))
+      //   return;
 
-      this.close();
+      if (this.props.onOutsideClick) this.props.onOutsideClick(evt.target);
+
+      // this.close();
     }
+
+    // close = () => {
+    //   if (this.props.onClose)
+    //     this.props.onClose();
+    // }
+
   }, {
     key: 'render',
     value: function render() {
@@ -257,9 +266,9 @@ var _initialiseProps = function _initialiseProps() {
       if (_this2.props.onChange) {
         _this2.props.onChange(date.format(_this2.state.format));
       }
-      if (_this2.props.onClose) {
-        _this2.props.onClose();
-      }
+      // if (this.props.onClose) {
+      //   this.props.onClose()
+      // }
     } else {
       _this2.setState({
         date: date,
@@ -275,13 +284,13 @@ var _initialiseProps = function _initialiseProps() {
 
     _this2.setState({ date: date });
 
-    if (_this2.props.onChange) {
+    if (isDayView && _this2.props.onChange) {
       _this2.props.onChange(date.format(_this2.state.format));
     }
 
-    if (_this2.props.closeOnSelect && isDayView && _this2.props.onClose) {
-      _this2.props.onClose();
-    }
+    // if (this.props.closeOnSelect !== false && isDayView && this.props.onClose) {
+    //   this.props.onClose();
+    // }
   };
 
   this.calendarClick = function () {
@@ -301,13 +310,9 @@ var _initialiseProps = function _initialiseProps() {
     if (_this2.props.onChange) {
       _this2.props.onChange(today.format(_this2.state.format));
     }
-    if (_this2.props.onClose) {
-      _this2.props.onClose();
-    }
-  };
-
-  this.close = function () {
-    if (_this2.props.onClose) _this2.props.onClose();
+    // if (this.props.onClose) {
+    //   this.props.onClose()
+    // }
   };
 };
 
